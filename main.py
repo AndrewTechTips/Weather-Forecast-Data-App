@@ -16,12 +16,15 @@ st.subheader(f"{option} for the next {days} days in {place}")
 
 # Get the temperature/sky data
 if place:
-    try:
-        filtered_data = get_data(place, days)
+    filtered_data = get_data(place, days)
 
+    if not filtered_data:
+        st.error("That place does not exist or there was an API error.")
+
+    else:
         if option == "Temperature":
-            temperatures = [dict["main"]["temp"] / 10 for dict in filtered_data]
-            dates = [dict["dt_txt"] for dict in filtered_data]
+            temperatures = [entry["main"]["temp"] for entry in filtered_data]
+            dates = [entry["dt_txt"] for entry in filtered_data]
 
             # Create a temperature plot
             figure = px.line(
@@ -36,10 +39,9 @@ if place:
                 "Rain": "assets/rain.png",
                 "Snow": "assets/snow.png",
             }
-            sky_conditions = [dict["weather"][0]["main"] for dict in filtered_data]
-            image_paths = [images[condition] for condition in sky_conditions]
-            dates = [dict["dt_txt"] for dict in filtered_data]
-            st.image(image_paths, width=115, caption=dates)
 
-    except KeyError:
-        st.write("That place does not exist.")
+            sky_conditions = [entry["weather"][0]["main"] for entry in filtered_data]
+            image_paths = [images[condition] for condition in sky_conditions]
+            dates = [entry["dt_txt"] for entry in filtered_data]
+
+            st.image(image_paths, width=115, caption=dates)
