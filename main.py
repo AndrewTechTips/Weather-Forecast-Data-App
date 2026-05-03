@@ -1,5 +1,8 @@
 import streamlit as st
+import plotly.express as px
+from backend import get_data
 
+# Add title, text input, slider, selectbox, and subheader
 st.title("Weather Forecast for the Next Days")
 place = st.text_input("Place: ")
 days = st.slider(
@@ -10,3 +13,28 @@ days = st.slider(
 )
 option = st.selectbox("Select data to view", ("Temperature", "Sky"))
 st.subheader(f"{option} for the next {days} days in {place}")
+
+# Get the temperature/sky data
+if place:
+    filtered_data = get_data(place, days)
+
+    if option == "Temperature":
+        temperatures = [dict["main"]["temp"] for dict in filtered_data]
+        dates = [dict["dt_txt"] for dict in filtered_data]
+
+        # Create a temperature plot
+        figure = px.line(
+            x=dates, y=temperatures, labels={"x": "Date", "y": "Temperature (C)"}
+        )
+        st.plotly_chart(figure)
+
+    if option == "Sky":
+        images = {
+            "Clear": "assets/clear.png",
+            "Clouds": "assets/cloud.png",
+            "Rain": "assets/rain.png",
+            "Snow": "assets/snow.png",
+        }
+        sky_conditions = [dict["weather"][0]["main"] for dict in filtered_data]
+        image_paths = [images[condition] for condition in sky_conditions]
+        st.image(image_paths)
