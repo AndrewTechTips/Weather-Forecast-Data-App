@@ -38,7 +38,8 @@ if place:
             }
             sky_conditions = [dict["weather"][0]["main"] for dict in filtered_data]
             image_paths = [images[condition] for condition in sky_conditions]
-            st.image(image_paths, width=115)
+            dates = [dict["dt_txt"] for dict in filtered_data]
+            st.image(image_paths, width=115, caption=dates)
 
     except KeyError:
         st.write("That place does not exist.")
