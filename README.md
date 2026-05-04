@@ -15,7 +15,7 @@
   </p>
 
   <h3>
-    <a href="#">🌤️ OPEN APP</a>
+    <a href="https://weathrly.streamlit.app/">🌤️ OPEN APP</a>
   </h3>
 
 </div>
