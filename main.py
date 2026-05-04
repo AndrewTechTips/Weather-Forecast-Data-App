@@ -2,8 +2,11 @@ import streamlit as st
 import plotly.express as px
 from backend import get_data
 
+st.set_page_config(page_title="Weather App", page_icon="🌤️", layout="centered")
+
 # Add title, text input, slider, selectbox, and subheader
-st.title("Weather Forecast for the Next Days")
+st.title("⛅ Weather Forecast")
+
 place = st.text_input("Place: ")
 days = st.slider(
     "Forecast Days",
@@ -12,10 +15,11 @@ days = st.slider(
     help="Select the number of forecasted days",
 )
 option = st.selectbox("Select data to view", ("Temperature", "Sky"))
-st.subheader(f"{option} for the next {days} days in {place}")
+st.divider()
 
 # Get the temperature/sky data
 if place:
+    st.subheader(f"{option} for the next {days} days in {place.title()}")
     filtered_data = get_data(place, days)
 
     if not filtered_data:
@@ -24,11 +28,14 @@ if place:
     else:
         if option == "Temperature":
             temperatures = [entry["main"]["temp"] for entry in filtered_data]
-            dates = [entry["dt_txt"] for entry in filtered_data]
+            dates = [entry["dt_txt"][:16] for entry in filtered_data]
 
             # Create a temperature plot
             figure = px.line(
-                x=dates, y=temperatures, labels={"x": "Date", "y": "Temperature (C)"}
+                x=dates,
+                y=temperatures,
+                labels={"x": "Date", "y": "Temperature (C)"},
+                line_shape="spline",
             )
             st.plotly_chart(figure)
 
@@ -42,6 +49,8 @@ if place:
 
             sky_conditions = [entry["weather"][0]["main"] for entry in filtered_data]
             image_paths = [images[condition] for condition in sky_conditions]
-            dates = [entry["dt_txt"] for entry in filtered_data]
+            dates = [entry["dt_txt"][:16] for entry in filtered_data]
 
             st.image(image_paths, width=115, caption=dates)
+else:
+    st.info("👆 Please enter a city name above to see the forecast.")
