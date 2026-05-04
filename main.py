@@ -21,7 +21,9 @@ st.divider()
 
 # Get the temperature/sky data
 if place:
-    st.subheader(f"{option} for the next {days} days in {place.title()}")
+    st.subheader(
+        f"{option} for {'tomorrow' if days == 1 else f'the next {days} days'} in {place.title()}"
+    )
     filtered_data = get_data(place, days)
 
     if not filtered_data:
