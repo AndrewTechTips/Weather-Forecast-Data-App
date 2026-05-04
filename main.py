@@ -54,7 +54,9 @@ if place:
                 images.get(condition, "assets/cloud.png")
                 for condition in sky_conditions
             ]
-            dates = [entry["dt_txt"][:16] for entry in filtered_data]
+            dates = [
+                entry["dt_txt"][:16].replace(" ", " | ") for entry in filtered_data
+            ]
 
             st.markdown(
                 """
