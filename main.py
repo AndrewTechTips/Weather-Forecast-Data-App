@@ -1,5 +1,7 @@
 import streamlit as st
 import plotly.express as px
+from streamlit import context
+
 from backend import get_data
 
 st.set_page_config(page_title="Weather App", page_icon="🌤️", layout="centered")
@@ -48,8 +50,24 @@ if place:
             }
 
             sky_conditions = [entry["weather"][0]["main"] for entry in filtered_data]
-            image_paths = [images[condition] for condition in sky_conditions]
+            image_paths = [
+                images.get(condition, "assets/cloud.png")
+                for condition in sky_conditions
+            ]
             dates = [entry["dt_txt"][:16] for entry in filtered_data]
+
+            st.markdown(
+                """
+                            <style>
+                            div[data-testid="stImage"] {
+                                display: flex;
+                                justify-content: center;
+                                flex-wrap: wrap;
+                            }
+                            </style>
+                        """,
+                unsafe_allow_html=True,
+            )
 
             st.image(image_paths, width=115, caption=dates)
 else:
